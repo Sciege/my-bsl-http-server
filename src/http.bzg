@@ -1,72 +1,91 @@
 // Include the BSL socket library (Installed via "bzg install socket")
 include("lib/socket.bzg");
-// 1. Initialize Socket
+
+// Initialize Socket
 if (socket_init() < 0) {
- print("Socket Initialization Failed\n");
+    print("Socket Initialization Failed\n");
 } else {
- print("Socket Ready\n");
+    print("Socket Ready\n");
 }
-// 2. Create Socket Server
+
+// Create Socket Server
 var server = socket_create();
 if (server < 0) {
- print("Socket Creation Failed\n");
+    print("Socket Creation Failed\n");
 }
-// 3. Bind Server to Port 8080
+
+// Bind Server to Port 8080
 if (socket_bind(server, 0, 8080) < 0) {
- print("Socket Bind Failed.\n");
+    print("Socket Bind Failed.\n");
 }
-// 4. Listen for incoming connections
+
+// Listen for incoming connections
 if (socket_listen(server, 5) < 0) {
- print("socket_listen() Failed.\n");
+    print("socket_listen() Failed.\n");
 }
+
 print("Server running on http://localhost:8080/\n");
+
 while (1) {
- // 5. Accept Client Connection
- var client = socket_accept(server);
- print("Client connected!\n");
+    // Accept Client Connection
+    var client = socket_accept(server);
+    print("Client connected!\n");
 
- var data = socket_read(client, 1024);
+    var data = socket_read(client, 1024);
 
- if (sizeof(data) >= 0) {
- print("Received Request:\n" + data);
- var BODY = "";
- var HTTP = "";
- // Route Handling Logic
- if (data.indexOf("GET / ") >= 0 || data.indexOf("GET /HTTP") >= 0) {
- BODY = "<!DOCTYPE html><html><head><title>BSL Server - Home</title></head>"
- + "<body style='font-family:sans-serif;'>"
- + "<h1 style='color:#0f766e;'>Welcome to BSL HTTP Server</h1>"
- + "<p>This is the default landing page served on route '/'</p>"
- + "</body></html>";
+    if (sizeof(data) >= 0) {
+        print("Received Request:\n" + data);
+        var BODY = "";
+        var HTTP = "";
 
- HTTP = "HTTP/1.1 200 OK\r\n"
- + "Content-Type: text/html\r\n"
- + "Content-Length: " + sizeof(BODY) + "\r\n"
- + "Connection: close\r\n\r\n";
- } else if (data.indexOf("GET /about") >= 0) {
- BODY = "<!DOCTYPE html><html><head><title>BSL Server - About</title></head>"
- + "<body style='font-family:sans-serif;'>"
- + "<h1 style='color:#0f766e;'>About BSL HTTP Server</h1>"
- + "<p>This page contains information about the BSL HTTP Server project.</p>"
- + "</body></html>";
- HTTP = "HTTP/1.1 200 OK\r\n"
- + "Content-Type: text/html\r\n"
- + "Content-Length: " + sizeof(BODY) + "\r\n"
- + "Connection: close\r\n\r\n";
- } else {
- BODY = "<!DOCTYPE html><html><head><title>404 Not Found</title></head>"
- + "<body style='font-family:sans-serif;'>"
- + "<h1 style='color:#e11d48;'>404 - Page Not Found</h1>"
- + "<p>The requested route does not exist on this BSL Server.</p>"
- + "</body></html>";
- HTTP = "HTTP/1.1 404 Not Found\r\n"
- + "Content-Type: text/html\r\n"
- + "Content-Length: " + sizeof(BODY) + "\r\n"
- + "Connection: close\r\n\r\n";
- }
- socket_write(client, HTTP + BODY, sizeof(HTTP + BODY));
- socket_close(client);
- gc(); // Manual Garbage Collection
- }
+        // Extract the exact start of the HTTP request header using index array mapping
+        // This grabs the method and path safely without relying on non-existent string methods
+        var reqHome = "GET / ";
+        var reqAbout = "GET /about";
+
+        // Route Handling Logic
+        if (data[0] == "G" && data[1] == "E" && data[2] == "T" && data[4] == "/" && data[5] == "a" && data[6] == "b" && data[7] == "o" && data[8] == "u" && data[9] == "t") {
+            // Evaluates true if request starts with "GET /about"
+            BODY = "<!DOCTYPE html><html><head><title>BSL Server - About</title></head>"
+                 + "<body style='font-family:sans-serif;'>"
+                 + "<h1 style='color:#0f766e;'>About BSL HTTP Server</h1>"
+                 + "<p>This page contains information about the BSL HTTP Server project.</p>"
+                 + "</body></html>";
+
+            HTTP = "HTTP/1.1 200 OK\r\n"
+                 + "Content-Type: text/html\r\n"
+                 + "Content-Length: " + sizeof(BODY) + "\r\n"
+                 + "Connection: close\r\n\r\n";
+
+        } else if (data[0] == "G" && data[1] == "E" && data[2] == "T" && data[4] == "/" && (data[5] == " " || data[5] == "H")) {
+            // Evaluates true if request starts with "GET / " or "GET /HTTP"
+            BODY = "<!DOCTYPE html><html><head><title>BSL Server - Home</title></head>"
+                 + "<body style='font-family:sans-serif;'>"
+                 + "<h1 style='color:#0f766e;'>Welcome to BSL HTTP Server</h1>"
+                 + "<p>This is the default landing page served on route '/'</p>"
+                 + "</body></html>";
+
+            HTTP = "HTTP/1.1 200 OK\r\n"
+                 + "Content-Type: text/html\r\n"
+                 + "Content-Length: " + sizeof(BODY) + "\r\n"
+                 + "Connection: close\r\n\r\n";
+
+        } else {
+            // Catch all for 404 responses
+            BODY = "<!DOCTYPE html><html><head><title>404 Not Found</title></head>"
+                 + "<body style='font-family:sans-serif;'>"
+                 + "<h1 style='color:#e11d48;'>404 - Page Not Found</h1>"
+                 + "<p>The requested route does not exist on this BSL Server.</p>"
+                 + "</body></html>";
+
+            HTTP = "HTTP/1.1 404 Not Found\r\n"
+                 + "Content-Type: text/html\r\n"
+                 + "Content-Length: " + sizeof(BODY) + "\r\n"
+                 + "Connection: close\r\n\r\n";
+        }
+
+        socket_write(client, HTTP + BODY, sizeof(HTTP + BODY));
+        socket_close(client);
+        gc(); // Manual Garbage Collection
+    }
 }
-socket_cleanup();

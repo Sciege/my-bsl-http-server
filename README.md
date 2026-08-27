@@ -8,33 +8,42 @@ This project implements a simple low-level HTTP server that listens on port 8080
 - `/about` — About page with project/developer details (200 OK)
 - Any other path — 404 Not Found page
 
-## Installation & Setup
-1. Install the Bonezegei extension in VS Code and follow its instructions to install the `bonezegei` interpreter.
-2. Install the socket library:
+## Installation & Setup (Dockerized Linux Setup)
+The project runs inside an isolated Ubuntu Docker container to satisfy the `GLIBC 2.38+` and 32-bit architecture requirements of the native engine.
+
+### Prerequisites
+- [Docker](https://docker.com) installed on your host system.
+- The `Bonezegei-x86.deb` installer placed inside the `pkg/` folder.
+
+### 1. Build the Docker Image
+From the root directory of your project, build the container image using:
 
 ```bash
-bzg install socket
+docker build -t bonezegei-server .
 ```
 
-3. From the project root, run the server:
+### 2. Run the Container Server Instance
+Launch the server in interactive mode, ensuring port mapping matches your assignment specification:
 
-```powershell
-bonezegei src\http.bzg
+```bash
+docker run -it -p 8080:8080 --name running-http-server bonezegei-server
 ```
 
 ## Usage
-Open a browser and visit:
-- http://localhost:8080/ — home page
-- http://localhost:8080/about — about page
-- http://localhost:8080/anything — shows the 404 page
+While the container terminal is active, open a web browser tab or open a separate terminal window on your host computer to inspect the server endpoints:
+- `http://localhost:8080/` — Home page
+- `http://localhost:8080/about` — About page
+- `http://localhost:8080/anything` — 404 error fall-through route
 
 ## Documentation / Screenshots
-Place screenshots in the `documentation/` folder:
-- `documentation/home.png`
-- `documentation/about.png`
-- `documentation/404.png`
-- `documentation/terminal.png`
+Place your captured evaluation images inside the `documentation/` folder layout:
+- `documentation/home.png` (Screenshot of `/` route)
+- `documentation/about.png` (Screenshot of `/about` route)
+- `documentation/404.png` (Screenshot of an unmapped route)
+- `documentation/terminal.png` (Screenshot of terminal showing `Socket Ready`)
 
-## Notes
-- `.gitattributes` is configured to render `.bzg` files using JavaScript syntax highlighting on GitHub.
-- `socket_cleanup()` is commented out in `src/http.bzg` to avoid environment-specific cleanup errors during development. You may re-enable it if your environment supports graceful cleanup.
+## Structural & Environment Adaptations
+- **Native Extensions Fixed**: Windows binary path indicators (`.dll`) were updated across `lib/socket.bzg` and `lib/http/http.bzg` to point to the Linux environment architecture (`lib/socket/socket.so` / `lib/http/http.so`).
+- **Dependency Automation**: The `Dockerfile` handles running `bzg install socket` automatically during image build compilation.
+- **Unreachable Block Silenced**: The trailing `socket_cleanup()` call has been muted since the continuous server script processes inside an endless execution matrix loop (`while (1)`).
+- **Dot-Notation Bypass**: Route checking relies directly on scalar evaluation checks rather than non-existent string methods (`data.indexOf`).

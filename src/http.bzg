@@ -37,12 +37,10 @@ while (1) {
         print("Received Request:\n" + data);
         var BODY = "";
         var HTTP = "";
-
         // Extract the exact start of the HTTP request header using index array mapping
         // This grabs the method and path safely without relying on non-existent string methods
         var reqHome = "GET / ";
         var reqAbout = "GET /about";
-
         // Route Handling Logic
         if (data[0] == "G" && data[1] == "E" && data[2] == "T" && data[4] == "/" && data[5] == "a" && data[6] == "b" && data[7] == "o" && data[8] == "u" && data[9] == "t") {
             // Evaluates true if request starts with "GET /about"
@@ -51,12 +49,10 @@ while (1) {
                  + "<h1 style='color:#0f766e;'>About BSL HTTP Server</h1>"
                  + "<p>This page contains information about the BSL HTTP Server project.</p>"
                  + "</body></html>";
-
             HTTP = "HTTP/1.1 200 OK\r\n"
                  + "Content-Type: text/html\r\n"
                  + "Content-Length: " + sizeof(BODY) + "\r\n"
                  + "Connection: close\r\n\r\n";
-
         } else if (data[0] == "G" && data[1] == "E" && data[2] == "T" && data[4] == "/" && (data[5] == " " || data[5] == "H")) {
             // Evaluates true if request starts with "GET / " or "GET /HTTP"
             BODY = "<!DOCTYPE html><html><head><title>BSL Server - Home</title></head>"
@@ -69,7 +65,6 @@ while (1) {
                  + "Content-Type: text/html\r\n"
                  + "Content-Length: " + sizeof(BODY) + "\r\n"
                  + "Connection: close\r\n\r\n";
-
         } else {
             // Catch all for 404 responses
             BODY = "<!DOCTYPE html><html><head><title>404 Not Found</title></head>"

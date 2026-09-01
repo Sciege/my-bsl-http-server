@@ -71,7 +71,6 @@ while (1) {
                  + "<h1 style='color:#e11d48;'>404 - Page Not Found</h1>"
                  + "<p>The requested route does not exist on this BSL Server.</p>"
                  + "</body></html>";
-
             HTTP = "HTTP/1.1 404 Not Found\r\n"
                  + "Content-Type: text/html\r\n"
                  + "Content-Length: " + sizeof(BODY) + "\r\n"

@@ -36,6 +36,8 @@ While the container terminal is active, open a web browser tab or open a separat
 - `http://localhost:8080/anything` — 404 error fall-through route
 
 ## Documentation / Screenshots
+TODO: UPDATE README
+
 Place your captured evaluation images inside the `documentation/` folder layout:
 - `documentation/home.png` (Screenshot of `/` route)
 - `documentation/about.png` (Screenshot of `/about` route)

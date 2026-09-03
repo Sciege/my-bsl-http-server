@@ -36,13 +36,18 @@ While the container terminal is active, open a web browser tab or open a separat
 - `http://localhost:8080/anything` — 404 error fall-through route
 
 ## Documentation / Screenshots
-TODO: UPDATE README
 
-Place your captured evaluation images inside the `documentation/` folder layout:
-- `documentation/home.png` (Screenshot of `/` route)
-- `documentation/about.png` (Screenshot of `/about` route)
-- `documentation/404.png` (Screenshot of an unmapped route)
-- `documentation/terminal.png` (Screenshot of terminal showing `Socket Ready`)
+### Terminal Startup
+![Socket Ready](documentation/terminal.png)
+
+### Home Page (`/`)
+![Home Page](documentation/home.png)
+
+### About Page (`/about`)
+![About Page](documentation/about.png)
+
+### 404 Fallback (`/anything`)
+![404 Fallback](documentation/404.png)
 
 ## Structural & Environment Adaptations
 - **Native Extensions Fixed**: Windows binary path indicators (`.dll`) were updated across `lib/socket.bzg` and `lib/http/http.bzg` to point to the Linux environment architecture (`lib/socket/socket.so` / `lib/http/http.so`).

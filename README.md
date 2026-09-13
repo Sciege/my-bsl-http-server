@@ -8,27 +8,58 @@ This project implements a simple low-level HTTP server that listens on port 8080
 - `/about` — About page with project/developer details (200 OK)
 - Any other path — 404 Not Found page
 
-## Installation & Setup (Dockerized Linux Setup)
-The project runs inside an isolated Ubuntu Docker container to satisfy the `GLIBC 2.38+` and 32-bit architecture requirements of the native engine.
+## Installation & Setup
 
-### Prerequisites
-- [Docker](https://docker.com) installed on your host system.
-- The `Bonezegei-x86.deb` installer placed inside the `pkg/` folder.
+### Option 1: Native Setup (Standard)
 
-### 1. Build the Docker Image
-From the root directory of your project, build the container image using:
+#### Prerequisites
+- Linux or Windows environment (or GitHub Codespaces for macOS).
+- VS Code with the **Bonezegei Scripting Language Formatter** extension installed.
 
-```bash
-docker build -t bonezegei-server .
-```
+#### Step-by-Step Instructions
+1. **Install the Bonezegei Interpreter**:
+   Follow the guide inside the VS Code extension to install the runtime for your operating system:
+   - For Debian/Ubuntu-based Linux:
+     ```bash
+     sudo dpkg -i pkg/Bonezegei-x86.deb
+     ```
+   - For Windows: Run the installer executable provided in the extension guide.
 
-### 2. Run the Container Server Instance
-Launch the server in interactive mode, ensuring port mapping matches your assignment specification:
+2. **Install the Socket Library**:
+   Install the official BSL socket module using the package CLI:
+   ```bash
+   bzg install socket
+   ```
 
-```bash
-docker run -it -p 8080:8080 --name running-http-server bonezegei-server
-```
+3. **Run the Server**:
+   Start the HTTP server directly using the BSL interpreter:
+   ```bash
+   bzg src/http.bzg
+   ```
 
+---
+
+### Option 2: Dockerized Linux Setup (Containerized)
+
+The project includes an isolated Ubuntu Docker configuration to handle the 32-bit architecture dependencies and `GLIBC 2.38+` requirements automatically.
+
+#### Prerequisites
+- [Docker](https://docker.com) installed and running on your host machine.
+- The `Bonezegei-x86.deb` package placed inside the `pkg/` folder.
+
+#### Step-by-Step Instructions
+1. **Build the Docker Image**:
+   From the repository root, build the container image:
+   ```bash
+   docker build -t bonezegei-server .
+   ```
+
+2. **Run the Container**:
+   Start the server container with port 8080 bound to the host:
+   ```bash
+   docker run -it -p 8080:8080 --name running-http-server bonezegei-server
+   ```
+   
 ## Usage
 While the container terminal is active, open a web browser tab or open a separate terminal window on your host computer to inspect the server endpoints:
 - `http://localhost:8080/` — Home page
